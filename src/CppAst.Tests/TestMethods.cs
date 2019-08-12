@@ -38,5 +38,48 @@ class MyClass0
                 }
             );
         }
+
+        [Test]
+        public void TestElaboratedType()
+        {
+            ParseAssert(@"
+namespace MyNamespace
+{
+class AnotherClass
+{
+
+};
+}
+
+class SameNamespaceClass
+{
+
+};
+
+class MyClass0
+{
+    public:
+    const MyNamespace::AnotherClass & method0();
+
+    const class SameNamespaceClass & method1();
+};
+",
+                compilation =>
+                {
+                    Assert.False(compilation.HasErrors);
+
+                    Assert.AreEqual(2, compilation.Classes.Count);
+
+                    var cppClass = compilation.Classes[1];
+                    Assert.AreEqual("MyClass0", cppClass.Name);
+
+                    var methods = cppClass.Functions;
+                    Assert.AreEqual(2, methods.Count);
+
+                    Assert.AreEqual("public const AnotherClass& method0()", methods[0].ToString());
+                    Assert.AreEqual("public const SameNamespaceClass& method1()", methods[1].ToString());
+                }
+            );
+        }
     }
 }
