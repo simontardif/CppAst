@@ -1547,8 +1547,12 @@ namespace CppAst
 
                 case CXTypeKind.CXType_Elaborated:
                     {
-                        var cppType = GetCppType(type.CanonicalType.Declaration, type.CanonicalType, parent, data);
-                        return VisitClassDecl(cursor, parent, data);
+                        if (cursor.kind == CXCursorKind.CXCursor_ClassDecl)
+                        {
+                            return VisitClassDecl(cursor, parent, data);
+                        }
+
+                        return GetCppType(type.CanonicalType.Declaration, type.CanonicalType, parent, data);
                     }
 
                 case CXTypeKind.CXType_ConstantArray:
