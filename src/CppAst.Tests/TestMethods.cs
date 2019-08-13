@@ -49,6 +49,13 @@ class AnotherClass
 {
 
 };
+
+class MyStruct
+{
+
+};
+
+typedef AnotherClass MyNewType;
 }
 
 class SameNamespaceClass
@@ -59,9 +66,14 @@ class SameNamespaceClass
 class MyClass0
 {
     public:
+
     const MyNamespace::AnotherClass & method0();
 
     const class SameNamespaceClass & method1();
+
+    const MyNamespace::MyNewType & method2();
+
+    const MyNamespace::MyStruct & method3();
 };
 ",
                 compilation =>
@@ -74,10 +86,12 @@ class MyClass0
                     Assert.AreEqual("MyClass0", cppClass.Name);
 
                     var methods = cppClass.Functions;
-                    Assert.AreEqual(2, methods.Count);
+                    Assert.AreEqual(4, methods.Count);
 
                     Assert.AreEqual("public const AnotherClass& method0()", methods[0].ToString());
                     Assert.AreEqual("public const SameNamespaceClass& method1()", methods[1].ToString());
+                    Assert.AreEqual("public const MyNewType& method2()", methods[2].ToString());
+                    Assert.AreEqual("public const MyStruct& method3()", methods[3].ToString());
                 }
             );
         }

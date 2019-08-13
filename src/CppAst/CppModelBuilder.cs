@@ -1547,9 +1547,14 @@ namespace CppAst
 
                 case CXTypeKind.CXType_Elaborated:
                     {
-                        if (cursor.kind == CXCursorKind.CXCursor_ClassDecl)
+                        if (cursor.kind == CXCursorKind.CXCursor_ClassDecl ||
+                            cursor.kind == CXCursorKind.CXCursor_StructDecl)
                         {
                             return VisitClassDecl(cursor, parent, data);
+                        }
+                        else if (cursor.kind == CXCursorKind.CXCursor_TypedefDecl)
+                        {
+                            return VisitTypeDefDecl(cursor, parent, data);
                         }
 
                         return GetCppType(type.CanonicalType.Declaration, type.CanonicalType, parent, data);
