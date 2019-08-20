@@ -53,6 +53,15 @@ namespace CppAst
 
         public override string ToString()
         {
+            if (ElementType.TypeKind == CppTypeKind.Pointer)
+            {
+                return $"{ElementType.GetDisplayName()} {Qualifier.ToString().ToLowerInvariant()}";
+            }
+            else if (ElementType.TypeKind == CppTypeKind.Unexposed)
+            {
+                return $"{ElementType.GetDisplayName()}";
+            }
+
             return $"{Qualifier.ToString().ToLowerInvariant()} {ElementType.GetDisplayName()}";
         }
     }

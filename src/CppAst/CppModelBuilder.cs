@@ -1458,7 +1458,17 @@ namespace CppAst
 
         private CppType GetCppType(CXCursor cursor, CXType type, CXCursor parent, CXClientData data)
         {
+            return GetCppType(cursor, type, null, parent, data);
+        }
+
+        private CppType GetCppType(CXCursor cursor, CXType type, CXType? parentType, CXCursor parent, CXClientData data)
+        {
             var cppType = GetCppTypeInternal(cursor, type, parent, data);
+
+            if (parentType != null && parentType.Value.kind == CXTypeKind.CXType_Elaborated)
+            {
+                return cppType;
+            }
 
             if (type.IsConstQualified)
             {
@@ -1547,17 +1557,17 @@ namespace CppAst
 
                 case CXTypeKind.CXType_Elaborated:
                     {
-                        if (cursor.kind == CXCursorKind.CXCursor_ClassDecl ||
-                            cursor.kind == CXCursorKind.CXCursor_StructDecl)
-                        {
-                            return VisitClassDecl(cursor, parent, data);
-                        }
-                        else if (cursor.kind == CXCursorKind.CXCursor_TypedefDecl)
+                        //if (cursor.kind == CXCursorKind.CXCursor_ClassDecl ||
+                        //    cursor.kind == CXCursorKind.CXCursor_StructDecl)
+                        //{
+                        //    return VisitClassDecl(cursor, parent, data);
+                        //}
+                        if (cursor.kind == CXCursorKind.CXCursor_TypedefDecl)
                         {
                             return VisitTypeDefDecl(cursor, parent, data);
                         }
 
-                        return GetCppType(type.CanonicalType.Declaration, type.CanonicalType, parent, data);
+                        return GetCppType(type.CanonicalType.Declaration, type.CanonicalType, type, parent, data);
                     }
 
                 case CXTypeKind.CXType_ConstantArray:
